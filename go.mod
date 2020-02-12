@@ -1,4 +1,4 @@
-module ctt
+module github.com/ssi91/ctt
 
 go 1.13
 
