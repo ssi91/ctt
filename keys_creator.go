@@ -48,6 +48,11 @@ func (b *AllocatedSimulatedBackend) Keys() *[]*ecdsa.PrivateKey {
 }
 
 func SendEtherToAddress(ctx context.Context, backend *AllocatedSimulatedBackend, senderKey *ecdsa.PrivateKey, receiverAddress *common.Address, value *big.Int) (*types.Receipt, error) {
+	var data []byte
+	return SendEtherToAddressWithData(ctx, backend, senderKey, receiverAddress, value, data)
+}
+
+func SendEtherToAddressWithData(ctx context.Context, backend *AllocatedSimulatedBackend, senderKey *ecdsa.PrivateKey, receiverAddress *common.Address, value *big.Int, data []byte) (*types.Receipt, error) {
 	nonce, err := backend.PendingNonceAt(ctx, crypto.PubkeyToAddress(senderKey.PublicKey))
 	if err != nil {
 		log.Printf("SendEtherToAddress error: %s\n", err)
@@ -62,7 +67,6 @@ func SendEtherToAddress(ctx context.Context, backend *AllocatedSimulatedBackend,
 		return nil, err
 	}
 
-	var data []byte
 	tx := types.NewTransaction(nonce, *receiverAddress, value, gasLimit, gasPrice, data)
 
 	chainID := big.NewInt(1337)
